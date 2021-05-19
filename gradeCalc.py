@@ -49,22 +49,30 @@ if SEM == "Semester-2":
         subCred = {"Big Data Processing":3, "Machine Learning":4, "Numerical Methods for Data Science":4,
                     "Optimization":3, "SAS based Mini Project - 1":2, "Information Retrieval":4,
                     "No SQL Databases":4, "Advanced Image Processing":4, "Multimedia Security and Forensics":3}
-        gradeNum = {"":"","AA":10,"AB":9,"BB":8,"BC":7,"CC":6,"CD":5,"DD":4}
+        gradeNum = {"":0,"AA":10,"AB":9,"BB":8,"BC":7,"CC":6,"CD":5,"DD":4}
         for i in allSub:
             subIndex[i] = ""
         with st.form(key='gradedata'):
             for i in allSub:
-                subIndex[i] = gradeNum[st.selectbox(i, ("","AA","AB","BB","BC","CC","CD","DD"))]
+                subIndex[i] = gradeNum[st.select_slider(i, ("AA","AB","BB","BC","CC","CD","DD"))]
 
             submitted = st.form_submit_button('Submit')
         if submitted:
             Numerator = 0
             Denominator = 0
+            MFleg = False
             for i in allSub:
+                if subIndex[i] == 0:
+                    MFleg = True
+                    break
                 Numerator += subIndex[i]*subCred[i]
                 Denominator += 10*subCred[i]
-            SPI = str(round((Numerator*10/Denominator),2))
-            st.markdown(f"<div style='font-size: 16px;'><center>Your SPI: <span class='highlight green'><span class='bold'>{SPI}</span></span></center></div>", unsafe_allow_html=True)
+            if not MFleg:
+                SPI = str(round((Numerator*10/Denominator),2))
+                st.markdown(f"<div style='font-size: 16px;'><center>Your SPI: <span class='highlight green'><span class='bold'>{SPI}</span></span></center></div>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<div style='font-size: 16px;'><center>Please select grades of <span class='highlight green'><span class='bold'>All Subjects!</span></span></center></div>", unsafe_allow_html=True)
+
 
 if SEM == "Semester-1":
     st.markdown(
