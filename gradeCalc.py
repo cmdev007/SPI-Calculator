@@ -61,11 +61,17 @@ if SEM == "Semester-2":
 
                 submitted = st.form_submit_button('Submit')
                 if submitted:
-                    if nInput.strip()=="":
-                        nInput = "anonymous"
+                    if elec!="":
+                        if nInput.strip()=="":
+                            nInput = "anonymous"
+                        else:
+                            nInput = nInput.lower().strip()
+                        st.experimental_set_query_params(**{"nInput": nInput, "elec": elec})
                     else:
-                        nInput = nInput.lower().strip()
-                    st.experimental_set_query_params(**{"nInput": nInput, "elec": elec})
+                        st.markdown(
+                            f"<div style='font-size: 16px;'><center><span class='highlight green'><span class='bold'>Please select Technical Elective</span></span></center></div>",
+                            unsafe_allow_html=True)
+                        st.markdown("")
     app_state = st.experimental_get_query_params()
     if app_state != {}:
         placeTitle.markdown(f"<div style='font-size:30px;color:grey;font-family:orbitron;'>\
