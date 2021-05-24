@@ -44,14 +44,21 @@ def read_data(sem):
 if "spidata.db" not in os.listdir():
     create_table()
 
-placeTitle = st.empty()
-placeTitle.markdown(f"<div style='font-size: 50px;;color:grey;font-family:orbitron;'><center><b>SPI Calculator</b></center></div>", unsafe_allow_html=True)
-st.markdown(f"<div style='font-size: 12px;'><center>By <a href='https://github.com/cmdev007/'><span class='highlight blue'><span class='bold'>cMDev007</span></span></a></center></div>", unsafe_allow_html=True)
-st.markdown("---")
-SEM = st.sidebar.radio("",("Semester-2","Semester-1"))
+
+SEM = st.sidebar.radio("",("Semester-2","Semester-1","CPI"))
 if SEM == "Semester-2":
+    placeTitle = st.empty()
+    placeTitle.markdown(
+        f"<div style='font-size: 50px;;color:grey;font-family:orbitron;'><center><b>SPI Calculator</b></center></div>",
+        unsafe_allow_html=True)
+    st.markdown(
+        f"<div style='font-size: 12px;'><center>By <a href='https://github.com/cmdev007/'><span class='highlight blue'><span class='bold'>cMDev007</span></span></a></center></div>",
+        unsafe_allow_html=True)
+    st.markdown("---")
+    placeInfo = st.empty()
+    placeInfo.info("For CPI check sidebar")
     app_state = st.experimental_get_query_params()
-    if app_state == {}:
+    if ("nInput" not in app_state.keys()) or ("elec" not in app_state.keys()):
         with st.beta_expander("SPI Calculator",expanded=True):
             with st.form(key='columns_in_form'):
 
@@ -73,10 +80,11 @@ if SEM == "Semester-2":
                             unsafe_allow_html=True)
                         st.markdown("")
     app_state = st.experimental_get_query_params()
-    if app_state != {}:
+    if ("nInput" in app_state.keys()) and ("elec" in app_state.keys()):
         placeTitle.markdown(f"<div style='font-size:30px;color:grey;font-family:orbitron;'>\
             <center><b>SPI Calculator</b></center></div>",
                             unsafe_allow_html=True)
+        placeInfo.empty()
         app_state = st.experimental_get_query_params()
         allSub = ["Big Data Processing", "Machine Learning", "Numerical Methods for Data Science", "Optimization",
                   "SAS based Mini Project - 1"]
@@ -127,9 +135,82 @@ if SEM == "Semester-2":
         'SPI': allSPI,
         }))
 if SEM == "Semester-1":
+    placeTitle = st.empty()
+    placeTitle.markdown(
+        f"<div style='font-size: 50px;;color:grey;font-family:orbitron;'><center><b>SPI Calculator</b></center></div>",
+        unsafe_allow_html=True)
+    st.markdown(
+        f"<div style='font-size: 12px;'><center>By <a href='https://github.com/cmdev007/'><span class='highlight blue'><span class='bold'>cMDev007</span></span></a></center></div>",
+        unsafe_allow_html=True)
+    st.markdown("---")
+    placeInfo = st.empty()
+    placeInfo.info("For CPI check sidebar")
     st.markdown(
         f"<div style='font-size: 20px;'><center><span class='highlight green'><span class='bold'>Coming Soon!</span></span></center></div>",
         unsafe_allow_html=True)
+
+if SEM == "CPI":
+    placeTitle = st.empty()
+    placeTitle.markdown(
+        f"<div style='font-size: 50px;;color:grey;font-family:orbitron;'><center><b>CPI Calculator</b></center></div>",
+        unsafe_allow_html=True)
+    st.markdown(
+        f"<div style='font-size: 12px;'><center>By <a href='https://github.com/cmdev007/'><span class='highlight blue'><span class='bold'>cMDev007</span></span></a></center></div>",
+        unsafe_allow_html=True)
+    st.markdown("---")
+
+    app_state = st.experimental_get_query_params()
+    if ("elec" not in app_state.keys()):
+        with st.beta_expander("CPI Calculator", expanded=True):
+            with st.form(key='columns_in_form'):
+                elec = st.selectbox("Technical Elective", (
+                "", "Information Retrieval", "No SQL Databases", "Advanced Image Processing",
+                "Multimedia Security and Forensics"))
+
+                submitted = st.form_submit_button('Submit')
+                if submitted:
+                    if elec != "":
+                        st.experimental_set_query_params(**{"elec": elec})
+                    else:
+                        st.markdown(
+                            f"<div style='font-size: 16px;'><center><span class='highlight green'><span class='bold'>Please select Technical Elective</span></span></center></div>",
+                            unsafe_allow_html=True)
+                        st.markdown("")
+    app_state = st.experimental_get_query_params()
+
+    if ("elec" in app_state.keys()):
+        placeTitle.markdown(f"<div style='font-size:30px;color:grey;font-family:orbitron;'>\
+                    <center><b>CPI Calculator</b></center></div>",
+                            unsafe_allow_html=True)
+        app_state = st.experimental_get_query_params()
+        allSub = ["Big Data Processing", "Machine Learning", "Numerical Methods for Data Science", "Optimization",
+                  "SAS based Mini Project - 1"]
+        allSub.extend(app_state["elec"])
+        subCred = {"Big Data Processing": 3, "Machine Learning": 4, "Numerical Methods for Data Science": 4,
+                   "Optimization": 3, "SAS based Mini Project - 1": 2, "Information Retrieval": 4,
+                   "No SQL Databases": 4, "Advanced Image Processing": 4, "Multimedia Security and Forensics": 3}
+        sem1Cred = 4+4+4+4+2
+        sem2Cred = 0
+        for i in allSub:
+            sem2Cred += subCred[i]
+        with st.form(key="CPI"):
+            sem1SPI = st.text_input("Enter Semester-1 SPI:")
+            sem2SPI = st.text_input("Enter Semester-2 SPI:")
+            submittedSPI = st.form_submit_button('Submit')
+
+        if submittedSPI:
+            sem1SPI = float(sem1SPI)
+            sem2SPI = float(sem2SPI)
+            CPI = str(round(((sem1SPI*sem1Cred)+(sem2SPI*sem2Cred))/(sem1Cred+sem2Cred), 2))
+            st.markdown(
+                f"<div style='font-size: 16px;'><center>Your CPI: <span class='highlight green'><span class='bold'>{CPI}</span></span></center></div>",
+                unsafe_allow_html=True)
+
+
+
+
+
+
 
 hide_streamlit_style = """
             <style>
